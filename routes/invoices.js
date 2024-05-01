@@ -4,10 +4,7 @@ const express = require("express");
 const ExpressError = require("../expressError");
 const db = require("../db");
 
-let router = new express.Router();
-
-// Define the base route for all routes in this router
-router.use("/invoices", require("./invoices"));
+let router = express.Router();
 
 //Get a list of invoices
 router.get("/", async (req, res, next) => {
@@ -131,12 +128,12 @@ router.put("/:id", async (req, res, next) => {
 
 //Deletes an invoice
 
-router.delete("/:id", async (res, req, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     let id = req.params.id;
 
     const result = await db.query(
-      `
+      `ç
         DELETE FROM invoices
         WHERE id = $1
         RETURNING id`,

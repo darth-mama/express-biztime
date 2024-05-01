@@ -1,11 +1,9 @@
 const db = require("../db");
 const express = require("express");
-const router = express.Router();
-const slugiy = require("slugify");
+const ExpressError = require("../expressError");
+const slugify = require("slugify");
 
-// Define the base route for all routes in this router
-router.use("/companies", require("./companies"));
-
+let router = new express.Router();
 //GET /companies - Fetch all companies
 
 router.get("/", async (req, res, next) => {
@@ -96,4 +94,4 @@ router.patch("/:code", async (req, res, next) => {
   }
 });
 
-module.exports.router;
+module.exports = router;
