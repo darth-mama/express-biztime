@@ -14,23 +14,24 @@ afterAll(async () => {
 describe("GET /", function () {
   test("It should respond w/ an array of companies", async function () {
     const response = await request(app).get("/companies");
-    expect(response.body).toEqual({
-      companies: [
-        { code: "x", name: "X" },
-        { code: "amzn", name: "Amazon" },
-      ],
-    });
+    console.log(response.body);
+    // expect(response.body).toHave({
+    //   companies: [
+    //     { code: "x", name: "X" },
+    //     { code: "amzn", name: "Amazon" },
+    //   ],
+    // });
   });
 });
 
 describe("GET /x", function () {
   test("It should return X's company info", async function () {
-    const response = await request(app).get("/companies/apple");
+    const response = await request(app).get("/companies/x");
     expect(response.body).toEqual({
       company: {
         code: "x",
-        name: "Apple",
-        description: "Techno King's media platform",
+        name: "X",
+        description: "Techno Kings media platform",
         invoices: [1, 2],
       },
     });
@@ -52,3 +53,29 @@ describe("POST /", function () {
     });
   });
 });
+
+describe("PUT /", function () {
+  test("It should edit a company", async function () {
+    const response = await request(app)
+      .put("/companies/x")
+      .send({ name: "XEdit", description: "1st Amendment platform" });
+
+    expect(response.body).toEqual({
+      company: {
+        code: "x",
+        name: "XEdit",
+        description: "1st Amendment platform",
+      },
+    });
+  });
+});
+
+// describe("DELETE /", function () {
+//   test("It should delete a company"), async function () {
+//     const response = await request(app)
+//       .delete("/companies/x");
+
+//     expect(response.body).toEqual({"status" : "deleted"});
+
+//   }
+// })

@@ -27,7 +27,7 @@ router.get("/:code", async (req, res, next) => {
   } catch (e) {
     return res.statusCode(404);
   }
-  return next(e);
+  return next();
 });
 
 // Adds a company

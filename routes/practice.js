@@ -29,3 +29,7 @@ router.get("/:id", async (req, res, next) => {
     return next(e);
   }
 });
+
+//Promise.all version of above code
+
+//Query Syntax - Many to Many
