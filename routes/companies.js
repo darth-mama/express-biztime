@@ -20,14 +20,28 @@ router.get("/", async (req, res, next) => {
 router.get("/:code", async (req, res, next) => {
   try {
     let code = req.params.code;
-    const companiesResult = await db.query(
+    const companyResult = await db.query(
       `SELECT code, name, description FROM companies WHERE code=$1`,
       [code]
     );
+    const invoiceResult = await db.query(
+      `SELECT id
+      FROM invoices
+      WHERE comp_code=$1`,
+      [code]
+    );
+    if (companyResult.rows.length === 0) {
+      throw new ExpressError(`${code} does not exist`, 404);
+    }
+
+    const company = companyResult.rows[0];
+    const invoices = invoiceResult.rows;
+    company.invoices = invoices.map((inv) => inv.id);
+
+    return res.json({ company: company });
   } catch (e) {
     return res.statusCode(404);
   }
-  return next();
 });
 
 // Adds a company
