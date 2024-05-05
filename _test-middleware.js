@@ -11,7 +11,7 @@ async function createData() {
                     VALUES ('x', 'X', 'Techno Kings media platform'),
                            ('amzn', 'Amazon', 'Bezos E-tailer')`);
 
-  const inv = await db.query(
+  await db.query(
     `INSERT INTO invoices (comp_Code, amt, paid, add_date, paid_date)
            VALUES ('x', 100, false, '2024-05-01', null),
                   ('x', 200, true, '2024-02-01', '2024-02-02'),

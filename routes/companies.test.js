@@ -70,12 +70,15 @@ describe("PUT /", function () {
   });
 });
 
-// describe("DELETE /", function () {
-//   test("It should delete a company"), async function () {
-//     const response = await request(app)
-//       .delete("/companies/x");
+describe("DELETE /", function () {
+  test("It should delete a company", async function () {
+    const response = await request(app).delete("/companies/x");
 
-//     expect(response.body).toEqual({"status" : "deleted"});
-
-//   }
-// })
+    // expect(response.status).toEqual(200); // Check for 200 status code
+    expect(response.body).toEqual({ status: "deleted" });
+  });
+  test("It should return 404 for company does not exist", async function () {
+    const response = await request(app).delete("/companies/unicorn");
+    expect(response.status).toEqual(404);
+  });
+});

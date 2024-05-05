@@ -41,6 +41,7 @@ router.get("/:code", async (req, res, next) => {
     return res.json({ company: company });
   } catch (e) {
     return res.statusCode(404);
+    return next(e);
   }
 });
 
@@ -86,9 +87,8 @@ router.put("/:code", async (req, res, next) => {
 });
 
 //Deletes company
-router.patch("/:code", async (req, res, next) => {
+router.delete("/:code", async (req, res, next) => {
   try {
-    let { name, description } = req.body;
     let code = req.params.code;
 
     const result = await db.query(

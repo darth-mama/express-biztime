@@ -10,8 +10,7 @@ let router = express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const result = await db.query(
-      `SELECT id, comp_code FROM invoices,
-        RETURN id, comp_code
+      `SELECT id, comp_code FROM invoices
         ORDER BY id`
     );
     return res.json({ invoices: result.rows });
@@ -21,10 +20,10 @@ router.get("/", async (req, res, next) => {
 });
 
 //Get a detailed invoice by id input
-router.get("/", async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
-    const { id } = req.query; // Assuming the id is passed as a query parameter
-
+    const { id } = req.params; // Assuming the id is passed as a query parameter
+    console.log(id);
     const result = await db.query(
       `SELECT
             i.id,
@@ -45,18 +44,22 @@ router.get("/", async (req, res, next) => {
     if (result.rows.length === 0) {
       throw new ExpressError(`${id} does not exist`, 404);
     }
+    console.log("SQL Query:", result.rows);
 
     const data = result.rows[0]; // Assuming only one row is returned
     const invoice = {
       id: data.id,
-      comp_code: data.comp_code,
-      name: data.name,
-      description: data.description,
+      company: {
+        code: data.comp_code,
+        name: data.name,
+        description: data.description,
+      },
       amt: data.amt,
       paid: data.paid,
-      add_date: data.add_date,
+      add_date: data.add_date.toISOString().substring(0, 10),
       paid_date: data.paid_date,
     };
+
     return res.json({ invoice: invoice });
   } catch (e) {
     return next(e);
@@ -75,6 +78,7 @@ router.post("/", async (req, res, next) => {
         RETURNING id, comp_code, amt, paid, add_date, paid_date`,
       [comp_code, amt]
     );
+    console.log(`result: ${result}`);
     res.json({ invoice: result.rows[0] });
   } catch (e) {
     return next(e);
@@ -85,7 +89,7 @@ router.post("/", async (req, res, next) => {
 //Get current invoice, make changes the invoice
 router.put("/:id", async (req, res, next) => {
   try {
-    let { amt, paid_date } = req.body;
+    let { amt, paid } = req.body;
     let id = req.params.id;
     let paidDate = null;
 
@@ -133,14 +137,13 @@ router.delete("/:id", async (req, res, next) => {
     let id = req.params.id;
 
     const result = await db.query(
-      `ç
-        DELETE FROM invoices
+      ` DELETE FROM invoices
         WHERE id = $1
         RETURNING id`,
       [id]
     );
 
-    if (result.rows[0].length === 0) {
+    if (result.rows.length === 0) {
       throw new ExpressError(`Invoice ${id} does not exist`, 404);
     }
 
